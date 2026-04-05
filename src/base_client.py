@@ -1,4 +1,6 @@
 import requests
+import json
+import allure
 
 class BaseClient:
     def __init__(self):
@@ -11,4 +13,16 @@ class BaseClient:
 
     def post(self, endpoint, payload):
         url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        return requests.post(url, json=payload, headers=self.headers)
+        response = requests.post(url, json=payload, headers=self.headers)
+
+        allure.attach(
+            json.dumps(payload, indent=4),
+            name="Request Body",
+            attachment_type=allure.attachment_type.JSON
+        )
+        allure.attach(
+            json.dumps(response.json(), indent=4),
+            name="Response Body",
+            attachment_type=allure.attachment_type.JSON
+        )
+        return response

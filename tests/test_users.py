@@ -37,3 +37,13 @@ def test_create_user(api_client):
         data = response.json()
         validated_user = CreateUserResponse(**data)
         assert validated_user.name == payload["name"]
+
+
+@allure.feature("Users")
+@allure.story("Get Non-existent User")
+def test_get_user_not_found(api_client):
+    with allure.step("Запрашиваем несуществующего пользователя с ID 999"):
+        response = api_client.get("/users/999")
+
+    with allure.step("Проверяем, что статус код 404"):
+        assert response.status_code == 404
